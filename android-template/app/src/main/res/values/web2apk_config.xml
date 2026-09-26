@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    =============================================================================
+    Web2APK Engine Reusable Configuration
+    =============================================================================
+    This file defines all runtime parameters and feature flags used by the WebView
+    engine. A Web2APK desktop or CLI builder can manipulate these values directly
+    to generate customized APKs/AABs without modifying Kotlin source files.
+    =============================================================================
+-->
+<resources>
+    <!--
+        Content Source Mode:
+        - 'url'   : Loads remote website specified in web2apk_default_url
+        - 'asset' : Loads local HTML file from assets (e.g., assets/www/index.html)
+        - 'html'  : Loads inline HTML code provided in web2apk_raw_html
+    -->
+    <string name="web2apk_content_type" translatable="false">url</string>
+
+    <!-- Default URL to load on launch (when content_type is 'url') -->
+    <string name="web2apk_default_url" translatable="false">https://www.google.com</string>
+
+    <!-- Relative path within assets directory (when content_type is 'asset') -->
+    <string name="web2apk_asset_path" translatable="false">www/index.html</string>
+
+    <!-- Raw inline HTML content (when content_type is 'html') -->
+    <string name="web2apk_raw_html" translatable="false"><![CDATA[<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;background:#F8FAFC;color:#0F172A;text-align:center;padding:24px;}h1{font-size:24px;margin-bottom:8px;}p{color:#64748B;font-size:15px;}</style></head><body><h1>Web2APK Engine</h1><p>Running from inline HTML string</p></body></html>]]></string>
+
+    <!--
+        Allowed hosts / domain whitelist:
+        Comma or semicolon-separated hostnames (e.g., "example.com,sub.example.com").
+        If empty, any URL navigation is allowed inside the WebView.
+        If populated, any navigation to a non-whitelisted domain will open in an external browser.
+    -->
+    <string name="web2apk_allowed_hosts" translatable="false"/>
+
+    <!-- Custom User-Agent suffix appended to the default WebView User-Agent (optional) -->
+    <string name="web2apk_user_agent_suffix" translatable="false">Web2APK/1.0.0</string>
+
+    <!-- ==================== Feature Flags ==================== -->
+    <!-- Show top App Bar / Toolbar -->
+    <bool name="web2apk_show_app_bar">false</bool>
+
+    <!-- App Bar title style: 'app_name' (show App Name) or 'web_title' (show active page title) -->
+    <string name="web2apk_app_bar_title_mode" translatable="false">web_title</string>
+
+    <!-- Show Back navigation button in the App Bar when WebView can go back -->
+    <bool name="web2apk_app_bar_show_back_button">true</bool>
+
+    <!-- Show Forward navigation button in the App Bar when WebView can go forward -->
+    <bool name="web2apk_app_bar_show_forward_button">true</bool>
+
+    <!-- Show Refresh button in the App Bar -->
+    <bool name="web2apk_app_bar_show_refresh_button">true</bool>
+
+    <!-- Show Home button in the App Bar (navigates back to base website URL) -->
+    <bool name="web2apk_app_bar_show_home_button">true</bool>
+
+    <!-- Show Share URL button in the App Bar -->
+    <bool name="web2apk_app_bar_show_share_button">true</bool>
+
+    <!-- Enable JavaScript execution -->
+    <bool name="web2apk_enable_javascript">true</bool>
+
+    <!-- Enable HTML5 DOM Storage (localStorage & sessionStorage) -->
+    <bool name="web2apk_enable_dom_storage">true</bool>
+
+    <!-- Enable HTML5 Database Storage (IndexedDB / WebSQL) -->
+    <bool name="web2apk_enable_database">true</bool>
+
+    <!-- Enable built-in pinch zoom gestures -->
+    <bool name="web2apk_enable_built_in_zoom">true</bool>
+
+    <!-- Display on-screen +/- zoom control buttons -->
+    <bool name="web2apk_display_zoom_controls">false</bool>
+
+    <!-- Enable Swipe-to-Refresh / Pull-to-Refresh gesture -->
+    <bool name="web2apk_enable_pull_to_refresh">true</bool>
+
+    <!-- Show animated loading progress bar at the top edge of the screen -->
+    <bool name="web2apk_enable_top_progress_bar">true</bool>
+
+    <!-- Show floating center progress indicator during initial load -->
+    <bool name="web2apk_enable_center_loader">false</bool>
+
+    <!-- Progress indicator style: 'bar', 'spinner', or 'both' -->
+    <string name="web2apk_progress_indicator_style" translatable="false">bar</string>
+
+    <!-- Enable file upload input (<input type="file">) including photo picker and camera -->
+    <bool name="web2apk_enable_file_upload">true</bool>
+
+    <!-- Enable file downloads via Android DownloadManager -->
+    <bool name="web2apk_enable_downloads">true</bool>
+
+    <!-- Enable HTML5 Geolocation API (navigator.geolocation) -->
+    <bool name="web2apk_enable_geolocation">true</bool>
+
+    <!-- Enable Camera and Microphone access for WebRTC (navigator.mediaDevices.getUserMedia) -->
+    <bool name="web2apk_enable_camera_microphone">true</bool>
+
+    <!-- Enable Notification permission prompt (Android 13+ POST_NOTIFICATIONS) -->
+    <bool name="web2apk_enable_notifications">true</bool>
+
+    <!-- Enable hardware back-button navigation through WebView browser history -->
+    <bool name="web2apk_enable_back_navigation">true</bool>
+
+    <!-- Show confirmation dialog or double-tap prompt before exiting when no more history exists -->
+    <bool name="web2apk_confirm_exit_on_back">true</bool>
+
+    <!-- Allow mixed HTTP and HTTPS content (MIXED_CONTENT_COMPATIBILITY_MODE). Recommended: false -->
+    <bool name="web2apk_allow_mixed_content">false</bool>
+
+    <!-- Clear WebView cache and cookies on application exit -->
+    <bool name="web2apk_clear_cache_on_exit">false</bool>
+
+    <!-- Support window.open() and target="_blank" links within app -->
+    <bool name="web2apk_support_multiple_windows">true</bool>
+
+    <!-- Automatically reload the failed page when internet connection is restored -->
+    <bool name="web2apk_auto_retry_on_network_recovery">true</bool>
+</resources>

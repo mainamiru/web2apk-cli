@@ -1,0 +1,80 @@
+{
+  "name": "@mainamiru/web2apk-cli",
+  "version": "1.0.0",
+  "description": "Production-ready CLI to package websites and web apps into native Android APK / AAB binaries with custom signing and interactive configuration",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "web2apk": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "android-template",
+    "assets",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "dev": "bun tsc --watch",
+    "web2apk": "bun run src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "doctor": "bun run src/index.ts doctor",
+    "prepublishOnly": "npm run build && npm run typecheck",
+    "prepack": "npm run build",
+    "test": "npm run typecheck",
+    "pack": "npm pack",
+    "publish:dry-run": "npm pack --dry-run"
+  },
+  "keywords": [
+    "android",
+    "apk",
+    "aab",
+    "webview",
+    "pwa",
+    "mobile",
+    "cli",
+    "build-tool",
+    "android-studio",
+    "gradle",
+    "web-to-app",
+    "hybrid-app",
+    "cross-platform"
+  ],
+  "author": "LUCKY BABU <dev.luckybabu@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mainamiru/web2apk-cli.git"
+  },
+  "homepage": "https://github.com/mainamiru/web2apk-cli#readme",
+  "bugs": {
+    "url": "https://github.com/mainamiru/web2apk-cli/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^26.6.3",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "chalk": "^6.0.0",
+    "cli-table3": "^0.6.5",
+    "commander": "^15.0.0",
+    "conf": "^15.1.0",
+    "execa": "^10.0.1",
+    "figlet": "^1.11.4",
+    "fs-extra": "^11.4.1",
+    "gradient-string": "^3.0.0",
+    "inquirer": "^14.2.2",
+    "open": "^11.0.4",
+    "ora": "^9.4.1",
+    "zod": "^4.6.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

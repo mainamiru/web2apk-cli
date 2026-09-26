@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    =============================================================================
+    Web2APK Engine Theme Colors
+    Builders can customize these hex values to instantly rebrand the application.
+    =============================================================================
+-->
+<resources>
+    <!-- Brand Primary Colors -->
+    <color name="web2apk_primary">#2563EB</color>
+    <color name="web2apk_on_primary">#FFFFFF</color>
+    <color name="web2apk_primary_container">#DBEAFE</color>
+    <color name="web2apk_on_primary_container">#1E40AF</color>
+
+    <!-- Brand Secondary / Accent -->
+    <color name="web2apk_secondary">#0D9488</color>
+    <color name="web2apk_on_secondary">#FFFFFF</color>
+    <color name="web2apk_secondary_container">#CCFBF1</color>
+    <color name="web2apk_on_secondary_container">#115E59</color>
+
+    <!-- Surfaces & Backgrounds -->
+    <color name="web2apk_background_light">#F8FAFC</color>
+    <color name="web2apk_surface_light">#FFFFFF</color>
+    <color name="web2apk_background_dark">#0F172A</color>
+    <color name="web2apk_surface_dark">#1E293B</color>
+
+    <!-- Splash Screen Color -->
+    <color name="web2apk_splash_background">#1A237E</color>
+    <color name="ic_launcher_background">#1A237E</color>
+
+    <!-- Status & Progress Bars -->
+    <color name="web2apk_progress_bar">#2563EB</color>
+    <color name="web2apk_progress_bar_track">#E2E8F0</color>
+
+    <!-- Error & Warning -->
+    <color name="web2apk_error">#DC2626</color>
+    <color name="web2apk_error_container">#FEE2E2</color>
+
+    <!-- Legacy / System compatibility -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#2563EB</color>
+    <color name="purple_700">#1D4ED8</color>
+    <color name="teal_200">#0D9488</color>
+    <color name="teal_700">#0F766E</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

@@ -1,0 +1,6 @@
+{
+  "name": "Web2APK Engine",
+  "description": "Production-ready Android WebView application template and engine for Web-to-APK builders, featuring full HTML5/JS support, file uploads, downloads, permissions, and offline recovery.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

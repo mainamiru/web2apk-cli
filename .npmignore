@@ -1,0 +1,59 @@
+# Source files
+src/
+*.ts
+tsconfig.json
+
+# Development files
+.git/
+.gitignore
+.bun.lock
+package-lock.json
+yarn.lock
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+test/
+tests/
+*.test.ts
+*.spec.ts
+
+# Documentation (excluding README.md and CHANGELOG.md)
+docs/
+*.md
+!README.md
+!CHANGELOG.md
+
+# Development dependencies
+node_modules/
+
+# Configuration files
+.env
+.env.local
+.env.*.local
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Other
+*.log
+coverage/
+.nyc_output/
+
+# AGENTS.md and other dev-only files
+AGENTS.md
+.devin/
+
+# Source maps (exclude from npm package to reduce size)
+*.map

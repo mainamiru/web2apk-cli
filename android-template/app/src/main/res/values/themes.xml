@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base Application Theme -->
+    <style name="Theme.Web2APK" parent="android:Theme.DeviceDefault.NoActionBar">
+        <item name="android:statusBarColor">@color/web2apk_surface_light</item>
+        <item name="android:navigationBarColor">@color/web2apk_surface_light</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+    <!-- Splash Screen Theme -->
+    <style name="Theme.Web2APK.Splash" parent="Theme.Web2APK">
+        <item name="android:windowBackground">@color/web2apk_splash_background</item>
+        <item name="android:statusBarColor">@color/web2apk_splash_background</item>
+        <item name="android:navigationBarColor">@color/web2apk_splash_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+
+    <!-- Legacy / Alias for backward compatibility -->
+    <style name="Theme.MyApplication" parent="Theme.Web2APK" />
+</resources>

@@ -1,0 +1,52 @@
+<resources>
+    <!-- Application Name (overridden by builder if specified) -->
+    <string name="app_name">CoolSite</string>
+
+    <!-- Error / Offline Screen -->
+    <string name="offline_title">No Internet Connection</string>
+    <string name="offline_message">We couldn’t reach the server. Please check your Wi-Fi or mobile data connection and try again.</string>
+    <string name="offline_button_retry">Try Again</string>
+    <string name="offline_button_settings" translatable="false">Open Network Settings</string>
+    <string name="offline_error_prefix">Error details: %1$s</string>
+    <string name="offline_retrying">Reconnecting…</string>
+    <string name="network_restored">Connection restored. Reloading…</string>
+
+    <!-- Navigation & Exit -->
+    <string name="toolbar_back">Back</string>
+    <string name="toolbar_forward">Forward</string>
+    <string name="toolbar_refresh">Refresh</string>
+    <string name="toolbar_home">Home</string>
+    <string name="toolbar_share">Share link</string>
+    <string name="share_subject">Check out this link</string>
+    <string name="press_back_again_to_exit">Press back again to exit</string>
+    <string name="exit_dialog_title">Exit Application?</string>
+    <string name="exit_dialog_message">Are you sure you want to leave the application?</string>
+    <string name="action_exit">Exit</string>
+    <string name="action_cancel">Cancel</string>
+
+    <!-- File Upload -->
+    <string name="file_chooser_title">Select an Action</string>
+    <string name="file_chooser_camera">Take a Photo</string>
+    <string name="file_chooser_gallery">Choose File</string>
+
+    <!-- Downloads -->
+    <string name="download_started">Downloading: %1$s</string>
+    <string name="download_failed">Failed to start download</string>
+    <string name="download_permission_needed">Storage permission needed to complete download</string>
+
+    <!-- Permissions Explanations -->
+    <string name="permission_camera_mic_title">Camera &amp; Microphone Access</string>
+    <string name="permission_camera_mic_message">This webpage is requesting access to your camera and/or microphone for video or audio capture.</string>
+    <string name="permission_location_title">Location Access</string>
+    <string name="permission_location_message">This webpage is requesting access to your current location.</string>
+    <string name="permission_grant">Allow</string>
+    <string name="permission_deny">Don’t Allow</string>
+    <string name="permission_denied_toast">Permission was denied by user</string>
+
+    <!-- SSL & Security -->
+    <string name="ssl_warning_title">Security Warning</string>
+    <string name="ssl_warning_message">A secure connection to this website could not be established. The SSL certificate is invalid.</string>
+
+    <!-- External Apps -->
+    <string name="no_app_to_handle_url">No application found to open this link</string>
+</resources>

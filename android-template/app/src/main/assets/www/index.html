@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Web2APK Offline HTML Demo</title>
+    <style>
+      :root {
+        --primary: #2563eb;
+        --primary-light: #dbeafe;
+        --surface: #ffffff;
+        --background: #f8fafc;
+        --text-primary: #0f172a;
+        --text-secondary: #64748b;
+        --card-border: #e2e8f0;
+        --success: #10b981;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --primary: #3b82f6;
+          --primary-light: #1e3a8a;
+          --surface: #1e293b;
+          --background: #0f172a;
+          --text-primary: #f8fafc;
+          --text-secondary: #94a3b8;
+          --card-border: #334155;
+        }
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        background-color: var(--background);
+        color: var(--text-primary);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 520px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .header {
+        text-align: center;
+        padding: 24px 16px 12px;
+      }
+      .badge {
+        display: inline-block;
+        background-color: var(--primary-light);
+        color: var(--primary);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 999px;
+        margin-bottom: 12px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+      h1 {
+        font-size: 26px;
+        font-weight: 800;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+      }
+      p.subtitle {
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .card {
+        background-color: var(--surface);
+        border-radius: 16px;
+        padding: 20px;
+        border: 1px solid var(--card-border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .card h2 {
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          opacity 0.2s,
+          transform 0.1s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        width: 100%;
+      }
+      .btn:active {
+        opacity: 0.85;
+        transform: scale(0.98);
+      }
+      .btn-outline {
+        background-color: transparent;
+        color: var(--primary);
+        border: 1.5px solid var(--primary);
+      }
+      input[type="file"] {
+        display: none;
+      }
+      .file-label {
+        background-color: var(--primary-light);
+        color: var(--primary);
+        padding: 14px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: block;
+        border: 2px dashed var(--primary);
+      }
+      .result-box {
+        background-color: var(--background);
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 13px;
+        color: var(--text-secondary);
+        word-break: break-all;
+        min-height: 20px;
+      }
+      .counter-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .counter-val {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--primary);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <span class="badge">Offline HTML Engine</span>
+        <h1>Local Web App</h1>
+        <p class="subtitle">
+          This page is served directly from the app's local assets. Fast,
+          offline-first, and zero latency.
+        </p>
+      </div>
+
+      <!-- HTML5 LocalStorage Demo -->
+      <div class="card">
+        <h2>Persistent Local Storage</h2>
+        <div class="counter-row">
+          <span>Stored Tap Count:</span>
+          <span id="counter" class="counter-val">0</span>
+        </div>
+        <button class="btn" onclick="incrementCounter()">
+          Tap to Count (Saved in DOM Storage)
+        </button>
+      </div>
+
+      <!-- File Upload Demo -->
+      <div class="card">
+        <h2>Native File Upload & Camera</h2>
+        <p class="subtitle">
+          Test Android file chooser and camera integration from HTML:
+        </p>
+        <label class="file-label" for="filePicker"
+          >📂 Select Any File or Photo</label
+        >
+        <input type="file" id="filePicker" onchange="fileSelected(this)" />
+        <div id="fileResult" class="result-box">No file selected yet.</div>
+      </div>
+
+      <!-- Geolocation Demo -->
+      <div class="card">
+        <h2>HTML5 Geolocation</h2>
+        <button class="btn btn-outline" onclick="requestLocation()">
+          📍 Check GPS Location
+        </button>
+        <div id="geoResult" class="result-box">Location will appear here.</div>
+      </div>
+
+      <!-- External Link Demo -->
+      <div class="card">
+        <h2>Web Navigation</h2>
+        <a href="https://www.google.com" class="btn">Navigate to Google</a>
+      </div>
+    </div>
+
+    <script>
+      // LocalStorage initialization
+      const counterEl = document.getElementById("counter");
+      let count = parseInt(
+        localStorage.getItem("web2apk_tap_count") || "0",
+        10,
+      );
+      counterEl.innerText = count;
+
+      function incrementCounter() {
+        count++;
+        localStorage.setItem("web2apk_tap_count", count.toString());
+        counterEl.innerText = count;
+      }
+
+      function fileSelected(input) {
+        const resultEl = document.getElementById("fileResult");
+        if (input.files && input.files.length > 0) {
+          const f = input.files[0];
+          resultEl.innerText = `Selected: ${f.name} (${(f.size / 1024).toFixed(1)} KB)`;
+        }
+      }
+
+      function requestLocation() {
+        const geoEl = document.getElementById("geoResult");
+        geoEl.innerText = "Requesting position…";
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              geoEl.innerText = `Latitude: ${pos.coords.latitude.toFixed(5)}, Longitude: ${pos.coords.longitude.toFixed(5)}`;
+            },
+            (err) => {
+              geoEl.innerText = `Error: ${err.message}`;
+            },
+            { enableHighAccuracy: true, timeout: 10000 },
+          );
+        } else {
+          geoEl.innerText = "Geolocation not supported by browser.";
+        }
+      }
+    </script>
+  </body>
+</html>
