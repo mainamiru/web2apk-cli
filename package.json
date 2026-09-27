@@ -1,6 +1,6 @@
 {
   "name": "@mainamiru/web2apk-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Production-ready CLI to package websites and web apps into native Android APK / AAB binaries with custom signing and interactive configuration",
   "main": "dist/index.js",
   "type": "module",
@@ -39,6 +39,7 @@
     "android-studio",
     "gradle",
     "web-to-app",
+    "web2apk",
     "hybrid-app",
     "cross-platform"
   ],
