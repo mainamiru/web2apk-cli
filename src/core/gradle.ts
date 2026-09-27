@@ -18,7 +18,7 @@ export function targetToGradleTask(target: BuildTarget): string {
 }
 
 export async function runGradle(
-  projectName: string,
+  projectName: string | undefined,
   gradleArgs: string[],
   opts?: { verbose?: boolean },
 ): Promise<void> {
@@ -29,7 +29,7 @@ export async function runGradle(
 }
 
 export async function findBuildOutput(
-  projectName: string,
+  projectName: string | undefined,
   target: BuildTarget,
 ): Promise<string | null> {
   const dir = projectDir(projectName);

@@ -1,8 +1,10 @@
 import chalk from "chalk";
+import path from "node:path";
 import inquirer from "inquirer";
 import ora from "ora";
 import fs from "fs-extra";
 import { ProjectManager } from "../core/project.js";
+import { AndroidConfigurator } from "../core/configurator.js";
 import {
   findBuildOutput,
   runGradle,
@@ -11,7 +13,8 @@ import {
 } from "../core/gradle.js";
 import { printBanner } from "../ui/banner.js";
 import { formatBytes } from "../utils/filesystem.js";
-import { projectDir } from "../utils/paths.js";
+import { projectDir, projectLabel } from "../utils/paths.js";
+import type { Web2ApkConfig } from "../schemas/web2apk-config.js";
 
 export interface BuildOptions {
   debug?: boolean;
@@ -48,46 +51,62 @@ function resolveTarget(
   return "debug";
 }
 
+function failBuild(json: boolean, projectName: string | undefined, msg: string, extra?: Record<string, unknown>): never {
+  if (json) {
+    console.log(
+      JSON.stringify({
+        success: false,
+        project: projectLabel(projectName),
+        ...extra,
+        error: msg,
+      }),
+    );
+    process.exit(1);
+  }
+  console.log(chalk.red(`\n✗ ${msg.split("\n")[0]}\n`));
+  if (msg.includes("\n")) console.log(chalk.gray(msg.split("\n").slice(1).join("\n")));
+  process.exit(1);
+}
+
 export async function buildCommand(
-  projectName: string,
+  projectName: string | undefined,
   opts: BuildOptions,
 ): Promise<void> {
   const json = Boolean(opts.json);
+  const key = projectName ?? "";
+  const labelName = projectLabel(projectName);
   if (!json) printBanner("Build Android Application");
 
   // 1. Validate config + project (quiet in json mode)
+  let config: Web2ApkConfig;
   try {
-    await ProjectManager.loadConfig(projectName);
+    config = await ProjectManager.loadConfig(key);
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    if (json) {
-      console.log(
-        JSON.stringify({ success: false, project: projectName, error: msg }),
-      );
-      process.exit(1);
-    }
-    console.log(chalk.red(`\n✗ Project validation failed\n`));
-    console.log(chalk.gray(msg));
-    process.exit(1);
+    failBuild(json, projectName, e instanceof Error ? e.message : String(e));
   }
 
-  if (!(await fs.pathExists(projectDir(projectName)))) {
-    const msg = `Android project not found for "${projectName}". Run: web2apk create ${projectName}`;
-    if (json) {
-      console.log(
-        JSON.stringify({ success: false, project: projectName, error: msg }),
-      );
-      process.exit(1);
-    }
-    console.log(chalk.red(`\n✗ ${msg}\n`));
-    process.exit(1);
+  const manifest = path.join(
+    projectDir(key),
+    "app",
+    "src",
+    "main",
+    "AndroidManifest.xml",
+  );
+  if (!(await fs.pathExists(manifest))) {
+    failBuild(
+      json,
+      projectName,
+      projectName
+        ? `Android project not found for "${projectName}". Run: web2apk create ${projectName}`
+        : `No Android project found in ${projectDir(key)}. Run: web2apk create <project-name>, or cd into a generated project.`,
+    );
   }
 
   // 2. Resolve target
   const target = await resolveTarget(opts, !json);
 
   const task = targetToGradleTask(target);
-  const label =
+  const buildLabel =
     target === "debug"
       ? "Debug APK"
       : target === "release"
@@ -96,14 +115,30 @@ export async function buildCommand(
 
   if (!json)
     console.log(
-      chalk.gray(`\nBuilding ${label} for ${projectName} (${task})...\n`),
+      chalk.gray(`\nBuilding ${buildLabel} for ${labelName} (${task})...\n`),
     );
 
-  // 3. Run Gradle Wrapper (never global gradle)
+  // 3. Inject web2apk.config.json into the Android project, then build
+  const injecting = json ? null : ora("Injecting web2apk.config.json...").start();
+  let injectWarnings: string[] = [];
+  try {
+    ({ warnings: injectWarnings } = await AndroidConfigurator.apply(config, key));
+    injecting?.succeed("Configuration injected");
+  } catch (e) {
+    injecting?.fail("Configuration injection failed");
+    failBuild(json, projectName, e instanceof Error ? e.message : String(e), {
+      stage: "configure",
+    });
+  }
+  if (!json) {
+    for (const w of injectWarnings) console.log(chalk.yellow(`⚠ ${w}`));
+  }
+
+  // 4. Run Gradle Wrapper (never global gradle)
   const spinner = json ? null : ora(`Running Gradle ${task}...`).start();
   const started = Date.now();
   try {
-    await runGradle(projectName, [task], { verbose: opts.verbose });
+    await runGradle(key, [task], { verbose: opts.verbose });
     spinner?.succeed("Gradle build completed");
   } catch (e) {
     spinner?.fail("Gradle build failed");
@@ -112,7 +147,7 @@ export async function buildCommand(
       console.log(
         JSON.stringify({
           success: false,
-          project: projectName,
+          project: labelName,
           variant: target,
           error: msg,
         }),
@@ -121,11 +156,11 @@ export async function buildCommand(
     }
     console.log(chalk.red(`\n✗ Build failed\n`));
     console.log(chalk.gray(`Gradle exited with an error (task: ${task}).`));
-    console.log(chalk.gray(`\nProject:\n  ${projectName}`));
-    console.log(chalk.gray(`\nBuild:\n  ${label}`));
+    console.log(chalk.gray(`\nProject:\n  ${labelName}`));
+    console.log(chalk.gray(`\nBuild:\n  ${buildLabel}`));
     console.log(
       chalk.gray(
-        `\nRun:\n  web2apk build ${projectName} --${target === "aab" ? "aab" : target}\n`,
+        `\nRun:\n  web2apk build${projectName ? ` ${projectName}` : ""} --${target === "aab" ? "aab" : target}\n`,
       ),
     );
     console.log(
@@ -134,8 +169,8 @@ export async function buildCommand(
     process.exit(1);
   }
 
-  // 4. Locate artifact (don't assume exact filename)
-  const output = await findBuildOutput(projectName, target);
+  // 5. Locate artifact (don't assume exact filename)
+  const output = await findBuildOutput(key, target);
   const elapsed = ((Date.now() - started) / 1000).toFixed(1);
 
   if (!output) {
@@ -145,7 +180,7 @@ export async function buildCommand(
       console.log(
         JSON.stringify({
           success: false,
-          project: projectName,
+          project: labelName,
           variant: target,
           error: msg,
         }),
@@ -164,12 +199,13 @@ export async function buildCommand(
     console.log(
       JSON.stringify({
         success: true,
-        project: projectName,
+        project: labelName,
         type,
         variant: target === "aab" ? "release" : target,
         output,
         sizeBytes: stat.size,
         elapsedSeconds: Number(elapsed),
+        warnings: injectWarnings,
       }),
     );
     return;
@@ -177,7 +213,7 @@ export async function buildCommand(
 
   console.log(chalk.green("✓ Project validated"));
   console.log(chalk.green("✓ Android template prepared"));
-  console.log(chalk.green("✓ Configuration applied"));
+  console.log(chalk.green("✓ web2apk.config.json injected"));
   console.log(chalk.green("✓ Gradle build completed"));
   console.log(chalk.bold.green("\nBuild successful!\n"));
   console.log(chalk.gray(type === "aab" ? "AAB:" : "APK:"));

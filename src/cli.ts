@@ -5,6 +5,7 @@ import { createCommand } from "./commands/create.js";
 import { validateCommand } from "./commands/validate.js";
 import { buildCommand } from "./commands/build.js";
 import { cleanCommand } from "./commands/clean.js";
+import { configCommand } from "./commands/config.js";
 import { doctorCommand } from "./commands/doctor.js";
 import { installCommand } from "./commands/install.js";
 import { printBanner } from "./ui/banner.js";
@@ -38,7 +39,7 @@ program
   )
   .option(
     "--icon <path>",
-    "Path to app icon (reserved for future icon pipeline)",
+    "App icon source (PNG, JPG, WEBP or SVG) — generates all launcher densities",
   )
   .option("--json", "Machine-readable output")
   .option("--verbose", "Show full error stack traces")
@@ -51,10 +52,10 @@ program
   });
 
 program
-  .command("validate <project-name>")
-  .description("Validate a generated project")
+  .command("validate [project-name]")
+  .description("Validate a generated project (defaults to the current directory)")
   .option("--json", "Machine-readable output")
-  .action(async (projectName: string, options: { json?: boolean }) => {
+  .action(async (projectName: string | undefined, options: { json?: boolean }) => {
     try {
       const ok = await validateCommand(projectName, options);
       if (!ok) process.exit(1);
@@ -64,14 +65,16 @@ program
   });
 
 program
-  .command("build <project-name>")
-  .description("Build APK/AAB with the project's Gradle Wrapper")
+  .command("build [project-name]")
+  .description(
+    "Build APK/AAB with the project's Gradle Wrapper (defaults to the current directory)",
+  )
   .option("--debug", "Build Debug APK (assembleDebug)")
   .option("--release", "Build Release APK (assembleRelease)")
   .option("--aab", "Build Release AAB (bundleRelease)")
   .option("--json", "Machine-readable output")
   .option("--verbose", "Show full error stack traces")
-  .action(async (projectName: string, options: Record<string, unknown>) => {
+  .action(async (projectName: string | undefined, options: Record<string, unknown>) => {
     try {
       await buildCommand(projectName, options as never);
     } catch (err) {
@@ -80,11 +83,44 @@ program
   });
 
 program
-  .command("clean <project-name>")
-  .description("Run Gradle clean inside the generated project")
-  .action(async (projectName: string) => {
+  .command("clean [project-name]")
+  .description("Run Gradle clean inside the generated project (defaults to the current directory)")
+  .action(async (projectName: string | undefined) => {
     try {
       await cleanCommand(projectName);
+    } catch (err) {
+      handleError(err, false);
+    }
+  });
+
+program
+  .command("config [project-name]")
+  .description("Read or update web2apk.config.json (defaults to the current directory)")
+  .option("--name <name>", "App display name")
+  .option(
+    "--package <package>",
+    "Android package name (e.g. com.example.mywebsite)",
+  )
+  .option("--url <url>", "Website URL")
+  .option("--version <version>", "Version name (e.g. 1.0.0)")
+  .option("--version-code <code>", "Version code (integer)")
+  .option("--content-type <type>", "Content type: url | asset | html")
+  .option(
+    "--asset <path>",
+    "Path to HTML file or asset directory (content-type asset)",
+  )
+  .option(
+    "--html <path-or-string>",
+    "HTML file path or inline HTML (content-type html)",
+  )
+  .option(
+    "--icon <path>",
+    "App icon source (PNG, JPG, WEBP or SVG) — generates all launcher densities",
+  )
+  .option("--json", "Machine-readable output")
+  .action(async (projectName: string | undefined, options: Record<string, unknown>) => {
+    try {
+      await configCommand(projectName, options as never);
     } catch (err) {
       handleError(err, false);
     }

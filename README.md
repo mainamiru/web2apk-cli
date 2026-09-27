@@ -15,7 +15,7 @@ A cross-platform TypeScript Command-Line Interface (CLI) that transforms any web
 - **Automatic SDK Installation**: Use `web2apk install --all` to automatically install missing dependencies like Java JDK and Android Studio.
 - **Interactive "Ask Mode"**: If any parameter is omitted when executing `web2apk build`, the CLI prompts interactively with clean menus, validation, and masked password prompts.
 - **Flexible Syntax**: Supports both standard GNU flags (`--orientation portrait`) and loose key-value pairs (`orientation=portrait`, `--content-type=url`).
-- **High-Density Icon Processor**: Resizes any PNG, JPG, or WEBP into all Android mipmap densities (`mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`) including circular masked variants and adaptive foregrounds.
+- **High-Density Icon Processor**: Resizes any PNG, JPG, WEBP or SVG into all Android mipmap densities (`mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`) including circular masked variants and adaptive foregrounds — regenerated automatically on every build.
 - **Custom Keystore & Signing**: Full support for release signing with `.jks`/`.keystore` files or the built-in interactive keystore generator (`web2apk keygen`).
 - **Offline HTML Asset Bundling**: Direct support for loading either remote websites (`--content-type url`) or offline bundled web assets (`--content-type index.html`).
 
@@ -188,11 +188,23 @@ If you run `web2apk build` without options, it will prompt for build type:
 web2apk build myproject
 ```
 
+#### Example E: Build the Current Directory
+`<project-name>` is optional everywhere. Run it from inside a generated project and the current directory is used:
+
+```bash
+cd myproject
+web2apk build --debug
+```
+
+Before Gradle runs, `web2apk.config.json` is re-injected into the Android project (`strings.xml`, `gradle.properties`, `web2apk_config.xml`, content assets), so config edits are always picked up by the next build.
+
 ### 5. Validate Project (`validate`)
-Validate a generated project's configuration:
+Validate a generated project's configuration (defaults to the current directory):
 
 ```bash
 web2apk validate myproject
+# or, from inside the project
+web2apk validate
 ```
 
 ### 6. Clean Build Cache (`clean`)
@@ -200,7 +212,37 @@ Purges Gradle build caches and previous outputs:
 
 ```bash
 web2apk clean myproject
+# or
+web2apk clean
 ```
+
+### 7. Read / Update Configuration (`config`)
+
+Print the active configuration:
+
+```bash
+web2apk config            # current directory
+web2apk config myproject  # named project
+```
+
+Update values (the file is written **and** injected into the Android project immediately):
+
+```bash
+web2apk config --name "Hello World"
+web2apk config myproject --name "Hello World" --url "https://example.com"
+web2apk config --package com.example.helloworld --version 1.2.0 --version-code 3
+web2apk config --content-type asset --asset "site/index.html"
+web2apk config --icon "assets/logo.png"
+```
+
+#### App icon (`--icon`)
+
+`create --icon` and `config --icon` copy the source image into the project (`assets/icon.png`), record it as `app.icon`, and immediately generate every launcher asset from it:
+
+- square `ic_launcher.png` and circular `ic_launcher_round.png` for `mdpi` → `xxxhdpi` (48/72/96/144/192 px)
+- the adaptive-icon foreground `drawable/ic_web2apk_icon.png` (512 px, 72 dp inside the 108 dp canvas)
+
+The icons are regenerated from `app.icon` on **every** `build`, so re-running `web2apk config --icon new.png` (or editing `web2apk.config.json`) is all you need. PNG, JPG, WEBP and SVG sources are accepted; 512×512 or larger is recommended.
 
 ---
 
@@ -234,11 +276,13 @@ web2apk clean myproject
 | `--content-type <type>` | Content type: url | asset | html | `url` |
 | `--asset <path>` | Path to HTML file or asset directory (content-type asset) | None |
 | `--html <path-or-string>` | HTML file path or inline HTML (content-type html) | None |
-| `--icon <path>` | Path to app icon | None |
+| `--icon <path>` | App icon source (PNG, JPG, WEBP or SVG) — generates all launcher densities | Template icons |
 | `--json` | Machine-readable output | `false` |
 | `--verbose` | Show full error stack traces | `false` |
 
-### `web2apk build <project-name>`
+### `web2apk build [project-name]`
+
+`[project-name]` is optional — omit it to target the current directory.
 
 | Option | Description | Default |
 | :--- | :--- | :--- |
@@ -247,6 +291,31 @@ web2apk clean myproject
 | `--aab` | Build Release AAB (bundleRelease) | `false` |
 | `--json` | Machine-readable output | `false` |
 | `--verbose` | Show full error stack traces | `false` |
+
+### `web2apk validate [project-name]` / `web2apk clean [project-name]`
+
+`[project-name]` is optional — omit it to target the current directory.
+
+| Option | Description | Default |
+| :--- | :--- | :--- |
+| `--json` | Machine-readable output (`validate` only) | `false` |
+
+### `web2apk config [project-name]`
+
+Reads `web2apk.config.json` when no option is given; otherwise updates the given keys, saves the file, and injects it into the Android project.
+
+| Option | Description | Default |
+| :--- | :--- | :--- |
+| `--name <name>` | App display name (`app.name`) | Current value |
+| `--package <package>` | Android package name (`app.packageName`) | Current value |
+| `--url <url>` | Website URL (`content.url`) | Current value |
+| `--version <version>` | Version name (e.g. 1.0.0) | Current value |
+| `--version-code <code>` | Version code (integer) | Current value |
+| `--content-type <type>` | Content type: url \| asset \| html | Current value |
+| `--asset <path>` | Path to HTML file or asset directory | Current value |
+| `--html <path-or-string>` | HTML file path or inline HTML | Current value |
+| `--icon <path>` | App icon source — regenerates all launcher densities | Current value |
+| `--json` | Machine-readable output | `false` |
 
 ---
 

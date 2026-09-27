@@ -1,6 +1,7 @@
 import path from "node:path";
 import fs from "fs-extra";
 import type { Web2ApkConfig } from "../schemas/web2apk-config.js";
+import { IconGenerator } from "./icon.js";
 import { projectDir } from "../utils/paths.js";
 
 // ---------- XML helpers (no extra deps; safe per-resource replacement) ----------
@@ -67,7 +68,7 @@ function updateGradleProperty(
 }
 
 export class AndroidConfigurator {
-  static configXmlPath(projectName: string): string {
+  static configXmlPath(projectName?: string): string {
     return path.join(
       projectDir(projectName),
       "app",
@@ -79,7 +80,7 @@ export class AndroidConfigurator {
     );
   }
 
-  static stringsXmlPath(projectName: string): string {
+  static stringsXmlPath(projectName?: string): string {
     return path.join(
       projectDir(projectName),
       "app",
@@ -91,16 +92,25 @@ export class AndroidConfigurator {
     );
   }
 
-  static gradlePropertiesPath(projectName: string): string {
+  static gradlePropertiesPath(projectName?: string): string {
     return path.join(projectDir(projectName), "gradle.properties");
   }
 
-  static async apply(config: Web2ApkConfig): Promise<void> {
-    const { project, app, content, webview } = config;
-    const dir = projectDir(project.name);
+  /**
+   * Inject web2apk.config.json into the Android project (resources, gradle
+   * properties, content assets, launcher icons).
+   * `projectName` is the directory key: pass "" to target the current working
+   * directory; it defaults to `config.project.name`.
+   */
+  static async apply(
+    config: Web2ApkConfig,
+    projectName: string = config.project.name,
+  ): Promise<{ warnings: string[] }> {
+    const { app, content, webview } = config;
+    const warnings: string[] = [];
 
     // 1. web2apk_config.xml — single engine for all runtime flags
-    const xmlPath = this.configXmlPath(project.name);
+    const xmlPath = this.configXmlPath(projectName);
     let xml = await fs.readFile(xmlPath, "utf-8");
 
     xml = setStringResource(xml, "web2apk_content_type", content.type, false);
@@ -179,7 +189,7 @@ export class AndroidConfigurator {
     await fs.writeFile(xmlPath, xml, "utf-8");
 
     // 2. App name via strings.xml (never hard-code in Kotlin)
-    const stringsPath = this.stringsXmlPath(project.name);
+    const stringsPath = this.stringsXmlPath(projectName);
     let strings = await fs.readFile(stringsPath, "utf-8");
     strings = setStringResource(strings, "app_name", app.name, false);
     await fs.writeFile(stringsPath, strings, "utf-8");
@@ -188,7 +198,7 @@ export class AndroidConfigurator {
     // The template's app/build.gradle.kts reads web2apk.* properties for
     // applicationId, versionCode/Name, appName, websiteUrl, contentType, assetPath.
     // Namespace (com.example) is the Kotlin R namespace — leave untouched.
-    const propsPath = this.gradlePropertiesPath(project.name);
+    const propsPath = this.gradlePropertiesPath(projectName);
     let props = await fs.readFile(propsPath, "utf-8");
     props = updateGradleProperty(
       props,
@@ -216,10 +226,27 @@ export class AndroidConfigurator {
     await fs.writeFile(propsPath, props, "utf-8");
 
     // 4. Content assets
-    await this.applyContentAssets(project.name, config);
+    await this.applyContentAssets(projectName, config);
 
-    // Marker that template was derived (does not touch master template)
-    void dir;
+    // 5. Launcher icons — regenerated on every injection when a source is set
+    if (config.app.icon) {
+      const source = await IconGenerator.resolveSource(
+        projectName,
+        config.app.icon,
+      );
+      if (!source) {
+        throw new Error(
+          `Icon source not found: "${config.app.icon}"\n\nExpected: ${path.join(
+            projectDir(projectName),
+            config.app.icon,
+          )}\nSet a new one with: web2apk config --icon <path>`,
+        );
+      }
+      const result = await IconGenerator.generate(projectName, source);
+      warnings.push(...result.warnings);
+    }
+
+    return { warnings };
   }
 
   private static async applyContentAssets(

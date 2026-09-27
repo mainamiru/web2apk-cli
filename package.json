@@ -53,7 +53,7 @@
     "url": "https://github.com/mainamiru/web2apk-cli/issues"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.17.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
@@ -72,6 +72,7 @@
     "inquirer": "^14.2.2",
     "open": "^11.0.4",
     "ora": "^9.4.1",
+    "sharp": "^0.34.5",
     "zod": "^4.6.5"
   },
   "publishConfig": {

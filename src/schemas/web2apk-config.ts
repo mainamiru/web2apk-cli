@@ -142,6 +142,8 @@ export const AppSchema = z.object({
       message: 'Invalid version name. Expected semver like "1.0.0".',
     }),
   versionCode: z.coerce.number().int().min(1).max(2100000000),
+  /** Project-relative source icon (e.g. assets/icon.png). Empty = template icons. */
+  icon: z.string().max(512).default(""),
 });
 
 export const ContentSchema = z
@@ -222,6 +224,7 @@ export function defaultConfig(projectName: string): Web2ApkConfig {
       packageName: "com.example.mywebsite",
       versionName: "1.0.0",
       versionCode: 1,
+      icon: "",
     },
     content: {
       type: "url",

@@ -22,10 +22,21 @@ export function projectsDir(): string {
   return path.join(process.cwd());
 }
 
-export function projectDir(projectName: string): string {
+/**
+ * Resolve a generated project directory.
+ * An omitted/empty project name means "the current working directory", so
+ * `web2apk build` inside a generated project works without arguments.
+ */
+export function projectDir(projectName?: string): string {
+  if (!projectName) return projectsDir();
   return path.join(projectsDir(), projectName);
 }
 
-export function configFilePath(projectName: string): string {
+export function configFilePath(projectName?: string): string {
   return path.join(projectDir(projectName), "web2apk.config.json");
+}
+
+/** Human readable project label for logs, hints and machine-readable output. */
+export function projectLabel(projectName?: string): string {
+  return projectName || path.basename(process.cwd());
 }

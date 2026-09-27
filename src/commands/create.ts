@@ -16,6 +16,7 @@ import { TemplateManager } from "../core/template.js";
 import { AndroidConfigurator } from "../core/configurator.js";
 import { ProjectManager } from "../core/project.js";
 import { AssetManager } from "../core/assets.js";
+import { IconGenerator } from "../core/icon.js";
 import { printBanner } from "../ui/banner.js";
 import { projectDir } from "../utils/paths.js";
 
@@ -59,6 +60,13 @@ export async function createCommand(
     fail(
       `Project already exists\n\nProject:\n  ${projectName}`,
       "Use another project name or remove the existing project.",
+    );
+  }
+
+  if (opts.icon && !(await fs.pathExists(path.resolve(opts.icon)))) {
+    fail(
+      "Icon file not found",
+      `Received: ${opts.icon}\nExpected a PNG, JPG, WEBP or SVG file.`,
     );
   }
 
@@ -131,12 +139,13 @@ export async function createCommand(
     }
 
     spinner.text = "Applying configuration...";
-    if (opts.icon && (await fs.pathExists(path.resolve(opts.icon)))) {
-      await AssetManager.copyIcon(projectName, path.resolve(opts.icon));
+    if (opts.icon) {
+      config.app.icon = await IconGenerator.ingest(projectName, opts.icon);
     }
-    await AndroidConfigurator.apply(config);
+    const { warnings: iconWarnings } = await AndroidConfigurator.apply(config);
     await ProjectManager.saveConfig(config);
     spinner.succeed("Project created");
+    for (const w of iconWarnings) console.log(chalk.yellow(`  ⚠ ${w}`));
   } catch (err) {
     spinner.fail("Failed to create project");
     throw err;
