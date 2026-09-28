@@ -5,15 +5,11 @@ import { printBanner } from "../ui/banner.js";
 import { projectDir } from "../utils/paths.js";
 import fs from "fs-extra";
 
-export async function cleanCommand(
-  projectName?: string,
-): Promise<void> {
+export async function cleanCommand(projectName?: string): Promise<void> {
   printBanner("Clean Project");
   if (!(await fs.pathExists(projectDir(projectName)))) {
     console.log(
-      chalk.red(
-        `\n✗ Project not found: ${projectName || process.cwd()}\n`,
-      ),
+      chalk.red(`\n✗ Project not found: ${projectName || process.cwd()}\n`),
     );
     process.exit(1);
   }

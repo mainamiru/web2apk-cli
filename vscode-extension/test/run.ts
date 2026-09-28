@@ -25,7 +25,9 @@ function makeChannel(): Channel {
 
 let failures = 0;
 function check(name: string, ok: boolean, detail?: string): void {
-  console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? ` — ${detail}` : ""}`);
+  console.log(
+    `${ok ? "PASS" : "FAIL"}  ${name}${detail ? ` — ${detail}` : ""}`,
+  );
   if (!ok) failures += 1;
 }
 
@@ -46,7 +48,10 @@ async function main(): Promise<void> {
   const cached = await probeCli();
   check("probeCli caches its result", cached === info);
   const forced = await probeCli(true);
-  check("probeCli can re-probe", forced.found && forced.version === info.version);
+  check(
+    "probeCli can re-probe",
+    forced.found && forced.version === info.version,
+  );
   check(
     "compareVersions orders versions",
     compareVersions("1.2.3", "1.10.0") < 0 &&
@@ -62,7 +67,10 @@ async function main(): Promise<void> {
   async function run(
     args: string[],
     cwd: string,
-  ): Promise<{ channel: Channel; result: Awaited<ReturnType<typeof runJson>> }> {
+  ): Promise<{
+    channel: Channel;
+    result: Awaited<ReturnType<typeof runJson>>;
+  }> {
     const channel = makeChannel();
     const result = await runJson({
       command: "node",
@@ -76,8 +84,15 @@ async function main(): Promise<void> {
 
   // ---------- validate ----------
   const v = await run(["validate", "--json"], project);
-  const vp = v.result.payload as { success?: boolean; checks?: unknown[] } | null;
-  check("validate returns a JSON payload", Boolean(vp), `code=${v.result.code}`);
+  const vp = v.result.payload as {
+    success?: boolean;
+    checks?: unknown[];
+  } | null;
+  check(
+    "validate returns a JSON payload",
+    Boolean(vp),
+    `code=${v.result.code}`,
+  );
   check("validate payload has checks", Array.isArray(vp?.checks));
   check("validate succeeded", vp?.success === true);
   check(
@@ -88,7 +103,10 @@ async function main(): Promise<void> {
 
   // ---------- doctor (pretty printed JSON) ----------
   const d = await run(["doctor", "--json"], project);
-  const dp = d.result.payload as { success?: boolean; checks?: unknown[] } | null;
+  const dp = d.result.payload as {
+    success?: boolean;
+    checks?: unknown[];
+  } | null;
   check(
     "doctor pretty-printed JSON parsed",
     Array.isArray(dp?.checks),
@@ -97,10 +115,17 @@ async function main(): Promise<void> {
 
   // ---------- build (JSON buried after Gradle output) ----------
   const b = await run(["build", "--debug", "--json"], project);
-  const bp = b.result.payload as
-    | { success?: boolean; output?: string; sizeBytes?: number; error?: string }
-    | null;
-  check("build JSON extracted after Gradle output", Boolean(bp), `code=${b.result.code}`);
+  const bp = b.result.payload as {
+    success?: boolean;
+    output?: string;
+    sizeBytes?: number;
+    error?: string;
+  } | null;
+  check(
+    "build JSON extracted after Gradle output",
+    Boolean(bp),
+    `code=${b.result.code}`,
+  );
   check("build succeeded", bp?.success === true, bp?.error ?? "");
   check(
     "build output points at an apk",
@@ -118,19 +143,25 @@ async function main(): Promise<void> {
   const ep = e.result.payload as { success?: boolean; error?: string } | null;
   check("failure still yields a JSON payload", Boolean(ep));
   check("failure payload.success is false", ep?.success === false);
-  check("failure exits with code 1", e.result.code === 1, String(e.result.code));
+  check(
+    "failure exits with code 1",
+    e.result.code === 1,
+    String(e.result.code),
+  );
 
   // ---------- parseCliJson units ----------
   const banner = "  _   _ _   _ ____\n  | | | | \\ | |  _ \\\n";
   const single = '{"success":true,"project":"t1","type":"apk"}';
   check(
     "parse: single-line JSON behind a banner",
-    (parseCliJson<{ project: string }>(`${banner}${single}`)?.project ?? "") === "t1",
+    (parseCliJson<{ project: string }>(`${banner}${single}`)?.project ?? "") ===
+      "t1",
   );
   check(
     "parse: pretty JSON behind noise",
-    parseCliJson<{ success: boolean }>(`noise\n${JSON.stringify({ success: true, checks: [{ label: "a" }] }, null, 2)}`)
-      ?.success === true,
+    parseCliJson<{ success: boolean }>(
+      `noise\n${JSON.stringify({ success: true, checks: [{ label: "a" }] }, null, 2)}`,
+    )?.success === true,
   );
   check(
     "parse: nested object without success is skipped",
@@ -140,10 +171,14 @@ async function main(): Promise<void> {
   );
   check(
     "parse: Gradle noise around JSON",
-    parseCliJson<{ success: boolean }>(`> Task :app:assembleDebug\n${single}\nBUILD SUCCESSFUL`)
-      ?.success === true,
+    parseCliJson<{ success: boolean }>(
+      `> Task :app:assembleDebug\n${single}\nBUILD SUCCESSFUL`,
+    )?.success === true,
   );
-  check("parse: no JSON returns null", parseCliJson("fatal: nothing here") === null);
+  check(
+    "parse: no JSON returns null",
+    parseCliJson("fatal: nothing here") === null,
+  );
   check("parse: empty input returns null", parseCliJson("") === null);
   check(
     "quoteForShell quotes values with spaces",
@@ -157,7 +192,10 @@ async function main(): Promise<void> {
   ) as Record<string, unknown>;
   const schema = JSON.parse(fs.readFileSync(schemaPath, "utf-8")) as {
     required?: string[];
-    properties?: Record<string, { properties?: Record<string, unknown>; required?: string[] }>;
+    properties?: Record<
+      string,
+      { properties?: Record<string, unknown>; required?: string[] }
+    >;
   };
   const schemaProps = schema.properties ?? {};
   const unknownTop = Object.keys(config).filter((key) => !(key in schemaProps));
@@ -184,7 +222,9 @@ async function main(): Promise<void> {
     );
   }
 
-  console.log(failures === 0 ? "\nALL TESTS PASSED" : `\n${failures} TEST(S) FAILED`);
+  console.log(
+    failures === 0 ? "\nALL TESTS PASSED" : `\n${failures} TEST(S) FAILED`,
+  );
   process.exit(failures === 0 ? 0 : 1);
 }
 

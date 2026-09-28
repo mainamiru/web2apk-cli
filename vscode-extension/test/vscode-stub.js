@@ -105,7 +105,10 @@ const stub = {
     withProgress: (_options, task) =>
       task(
         { report() {} },
-        { isCancellationRequested: false, onCancellationRequested: () => ({ dispose() {} }) },
+        {
+          isCancellationRequested: false,
+          onCancellationRequested: () => ({ dispose() {} }),
+        },
       ),
     activeTextEditor: undefined,
   },

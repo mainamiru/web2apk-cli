@@ -21,43 +21,58 @@ export class SDKInstaller {
     try {
       if (isWindows()) {
         // Windows: Use winget to install OpenJDK 17
-        await execa("winget", ["install", "--id", "Microsoft.OpenJDK.17", "--silent", "--accept-package-agreements", "--accept-source-agreements"]);
+        await execa("winget", [
+          "install",
+          "--id",
+          "Microsoft.OpenJDK.17",
+          "--silent",
+          "--accept-package-agreements",
+          "--accept-source-agreements",
+        ]);
         spinner.succeed("Java JDK 17 installed successfully");
         return {
           success: true,
-          message: "Java JDK 17 installed via winget. Please restart your terminal.",
-          requiresRestart: true
+          message:
+            "Java JDK 17 installed via winget. Please restart your terminal.",
+          requiresRestart: true,
         };
       } else if (process.platform === "darwin") {
         // macOS: Use Homebrew to install OpenJDK 17
         await execa("brew", ["install", "openjdk@17"]);
-        
+
         // Create symlink for macOS
-        await execa("sudo", ["ln", "-sfn", "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk", "/Library/Java/JavaVirtualMachines/openjdk-17.jdk"]);
-        
+        await execa("sudo", [
+          "ln",
+          "-sfn",
+          "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk",
+          "/Library/Java/JavaVirtualMachines/openjdk-17.jdk",
+        ]);
+
         spinner.succeed("Java JDK 17 installed successfully");
         return {
           success: true,
-          message: "Java JDK 17 installed via Homebrew. Please restart your terminal.",
-          requiresRestart: true
+          message:
+            "Java JDK 17 installed via Homebrew. Please restart your terminal.",
+          requiresRestart: true,
         };
       } else {
         // Linux: Use apt to install OpenJDK 17
         await execa("sudo", ["apt-get", "update"]);
         await execa("sudo", ["apt-get", "install", "-y", "openjdk-17-jdk"]);
-        
+
         spinner.succeed("Java JDK 17 installed successfully");
         return {
           success: true,
-          message: "Java JDK 17 installed via apt. Please restart your terminal.",
-          requiresRestart: true
+          message:
+            "Java JDK 17 installed via apt. Please restart your terminal.",
+          requiresRestart: true,
         };
       }
     } catch (error) {
       spinner.fail("Failed to install Java JDK");
       return {
         success: false,
-        message: `Failed to install Java JDK: ${error instanceof Error ? error.message : String(error)}`
+        message: `Failed to install Java JDK: ${error instanceof Error ? error.message : String(error)}`,
       };
     }
   }
@@ -76,19 +91,28 @@ export class SDKInstaller {
           spinner.succeed("Android Studio is already installed");
           return {
             success: true,
-            message: "Android Studio is already installed via winget. If you need to reinstall, use the --force flag."
+            message:
+              "Android Studio is already installed via winget. If you need to reinstall, use the --force flag.",
           };
         } catch {
           // Not installed, proceed with installation
         }
 
         // Windows: Use winget to install Android Studio
-        await execa("winget", ["install", "--id", "Google.AndroidStudio", "--silent", "--accept-package-agreements", "--accept-source-agreements"]);
+        await execa("winget", [
+          "install",
+          "--id",
+          "Google.AndroidStudio",
+          "--silent",
+          "--accept-package-agreements",
+          "--accept-source-agreements",
+        ]);
         spinner.succeed("Android Studio installed successfully");
         return {
           success: true,
-          message: "Android Studio installed via winget. Please launch Android Studio and complete the initial setup to install the Android SDK.",
-          requiresRestart: true
+          message:
+            "Android Studio installed via winget. Please launch Android Studio and complete the initial setup to install the Android SDK.",
+          requiresRestart: true,
         };
       } else if (process.platform === "darwin") {
         // macOS: Use Homebrew Cask to install Android Studio
@@ -96,32 +120,41 @@ export class SDKInstaller {
         spinner.succeed("Android Studio installed successfully");
         return {
           success: true,
-          message: "Android Studio installed via Homebrew. Please launch Android Studio and complete the initial setup to install the Android SDK.",
-          requiresRestart: true
+          message:
+            "Android Studio installed via Homebrew. Please launch Android Studio and complete the initial setup to install the Android SDK.",
+          requiresRestart: true,
         };
       } else {
         // Linux: Download and install Android Studio
-        spinner.fail("Automatic Android Studio installation not supported on Linux");
+        spinner.fail(
+          "Automatic Android Studio installation not supported on Linux",
+        );
         return {
           success: false,
-          message: "Please install Android Studio manually: https://developer.android.com/studio"
+          message:
+            "Please install Android Studio manually: https://developer.android.com/studio",
         };
       }
     } catch (error) {
       spinner.fail("Failed to install Android Studio");
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
       // Check if the error is because it's already installed
-      if (errorMessage.includes("already installed") || errorMessage.includes("cannot be upgraded")) {
+      if (
+        errorMessage.includes("already installed") ||
+        errorMessage.includes("cannot be upgraded")
+      ) {
         return {
           success: true,
-          message: "Android Studio is already installed. If you need to reinstall, use the --force flag."
+          message:
+            "Android Studio is already installed. If you need to reinstall, use the --force flag.",
         };
       }
-      
+
       return {
         success: false,
-        message: `Failed to install Android Studio: ${errorMessage}`
+        message: `Failed to install Android Studio: ${errorMessage}`,
       };
     }
   }
@@ -131,18 +164,18 @@ export class SDKInstaller {
    */
   static async installAndroidSDKComponents(): Promise<InstallResult> {
     const sdkRoot = process.env.ANDROID_HOME || process.env.ANDROID_SDK_ROOT;
-    
+
     if (!sdkRoot || !(await fs.pathExists(sdkRoot))) {
       return {
         success: false,
-        message: "Android SDK not found. Please install Android Studio first."
+        message: "Android SDK not found. Please install Android Studio first.",
       };
     }
 
     const spinner = ora("Installing Android SDK components...").start();
 
     try {
-      const sdkmanagerPath = isWindows() 
+      const sdkmanagerPath = isWindows()
         ? path.join(sdkRoot, "cmdline-tools", "latest", "bin", "sdkmanager.bat")
         : path.join(sdkRoot, "cmdline-tools", "latest", "bin", "sdkmanager");
 
@@ -150,25 +183,39 @@ export class SDKInstaller {
         spinner.fail("sdkmanager not found");
         return {
           success: false,
-          message: "sdkmanager not found. Please install Android SDK Command-line Tools via Android Studio SDK Manager."
+          message:
+            "sdkmanager not found. Please install Android SDK Command-line Tools via Android Studio SDK Manager.",
         };
       }
 
       // Install platform-tools and latest Android platform
-      await execa(sdkmanagerPath, ["platform-tools", "platform-tools", "platforms;android-34", "build-tools;34.0.0"], {
-        env: { ...process.env, ANDROID_HOME: sdkRoot, ANDROID_SDK_ROOT: sdkRoot }
-      });
+      await execa(
+        sdkmanagerPath,
+        [
+          "platform-tools",
+          "platform-tools",
+          "platforms;android-34",
+          "build-tools;34.0.0",
+        ],
+        {
+          env: {
+            ...process.env,
+            ANDROID_HOME: sdkRoot,
+            ANDROID_SDK_ROOT: sdkRoot,
+          },
+        },
+      );
 
       spinner.succeed("Android SDK components installed successfully");
       return {
         success: true,
-        message: "Android SDK components installed successfully."
+        message: "Android SDK components installed successfully.",
       };
     } catch (error) {
       spinner.fail("Failed to install Android SDK components");
       return {
         success: false,
-        message: `Failed to install Android SDK components: ${error instanceof Error ? error.message : String(error)}`
+        message: `Failed to install Android SDK components: ${error instanceof Error ? error.message : String(error)}`,
       };
     }
   }
@@ -212,18 +259,41 @@ export class SDKInstaller {
     if (isWindows()) {
       // Check multiple possible installation paths on Windows
       const possiblePaths = [
-        path.join(process.env.LOCALAPPDATA || "", "Programs", "Android Studio", "studio64.exe"),
-        path.join(process.env.PROGRAMFILES || "", "Android", "Android Studio", "bin", "studio64.exe"),
-        path.join(process.env.PROGRAMFILES || "", "Android", "Android Studio", "bin", "studio.bat"),
-        path.join(process.env.LOCALAPPDATA || "", "Android", "android-studio", "bin", "studio64.exe"),
+        path.join(
+          process.env.LOCALAPPDATA || "",
+          "Programs",
+          "Android Studio",
+          "studio64.exe",
+        ),
+        path.join(
+          process.env.PROGRAMFILES || "",
+          "Android",
+          "Android Studio",
+          "bin",
+          "studio64.exe",
+        ),
+        path.join(
+          process.env.PROGRAMFILES || "",
+          "Android",
+          "Android Studio",
+          "bin",
+          "studio.bat",
+        ),
+        path.join(
+          process.env.LOCALAPPDATA || "",
+          "Android",
+          "android-studio",
+          "bin",
+          "studio64.exe",
+        ),
       ];
-      
+
       for (const checkPath of possiblePaths) {
         if (await fs.pathExists(checkPath)) {
           return true;
         }
       }
-      
+
       // Also check using winget
       try {
         await execa("winget", ["list", "--id", "Google.AndroidStudio"]);
@@ -239,9 +309,9 @@ export class SDKInstaller {
       const commonPaths = [
         "/opt/android-studio/bin/studio.sh",
         "/usr/local/android-studio/bin/studio.sh",
-        path.join(process.env.HOME || "", "android-studio", "bin", "studio.sh")
+        path.join(process.env.HOME || "", "android-studio", "bin", "studio.sh"),
       ];
-      
+
       for (const checkPath of commonPaths) {
         if (await fs.pathExists(checkPath)) {
           return true;
@@ -282,21 +352,31 @@ export class SDKInstaller {
     // Check and install Android SDK components
     const hasAndroidSDK = await this.checkAndroidSDK();
     if (!hasAndroidSDK) {
-      console.log(chalk.yellow("Android SDK not found. Please install Android Studio and complete the setup first."));
+      console.log(
+        chalk.yellow(
+          "Android SDK not found. Please install Android Studio and complete the setup first.",
+        ),
+      );
     } else {
       console.log(chalk.green("✓ Android SDK is found"));
-      
+
       // Check for required SDK components
       const sdkRoot = process.env.ANDROID_HOME || process.env.ANDROID_SDK_ROOT;
       if (sdkRoot) {
         const platformsPath = path.join(sdkRoot, "platforms");
         const buildToolsPath = path.join(sdkRoot, "build-tools");
-        
-        const hasPlatforms = await fs.pathExists(platformsPath) && (await fs.readdir(platformsPath)).length > 0;
-        const hasBuildTools = await fs.pathExists(buildToolsPath) && (await fs.readdir(buildToolsPath)).length > 0;
-        
+
+        const hasPlatforms =
+          (await fs.pathExists(platformsPath)) &&
+          (await fs.readdir(platformsPath)).length > 0;
+        const hasBuildTools =
+          (await fs.pathExists(buildToolsPath)) &&
+          (await fs.readdir(buildToolsPath)).length > 0;
+
         if (!hasPlatforms || !hasBuildTools) {
-          console.log(chalk.yellow("Android SDK components missing. Installing..."));
+          console.log(
+            chalk.yellow("Android SDK components missing. Installing..."),
+          );
           const result = await this.installAndroidSDKComponents();
           results.push({ component: "Android SDK Components", result });
         } else {
@@ -307,7 +387,7 @@ export class SDKInstaller {
 
     // Print summary
     console.log(chalk.bold("\n📋 Installation Summary:\n"));
-    
+
     let allSuccess = true;
     for (const { component, result } of results) {
       if (result.success) {
@@ -321,14 +401,24 @@ export class SDKInstaller {
     if (results.length === 0) {
       console.log(chalk.green("All dependencies are already installed!"));
     } else if (allSuccess) {
-      console.log(chalk.green("\n✓ All missing dependencies installed successfully!"));
-      
-      const requiresRestart = results.some(r => r.result.requiresRestart);
+      console.log(
+        chalk.green("\n✓ All missing dependencies installed successfully!"),
+      );
+
+      const requiresRestart = results.some((r) => r.result.requiresRestart);
       if (requiresRestart) {
-        console.log(chalk.yellow("\n⚠️  Please restart your terminal and run 'web2apk doctor' to verify the installation."));
+        console.log(
+          chalk.yellow(
+            "\n⚠️  Please restart your terminal and run 'web2apk doctor' to verify the installation.",
+          ),
+        );
       }
     } else {
-      console.log(chalk.red("\n✗ Some dependencies failed to install. Please install them manually."));
+      console.log(
+        chalk.red(
+          "\n✗ Some dependencies failed to install. Please install them manually.",
+        ),
+      );
     }
   }
 }

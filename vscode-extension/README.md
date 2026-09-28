@@ -19,10 +19,10 @@ The extension is a thin, transparent wrapper around the CLI: every action runs t
 
 ## Requirements
 
-| Requirement | Details |
-| --- | --- |
-| VS Code | 1.95 or newer |
-| web2apk CLI | `npm i -g @mainamiru/web2apk-cli` (Node.js >= 18.17) |
+| Requirement   | Details                                                                        |
+| ------------- | ------------------------------------------------------------------------------ |
+| VS Code       | 1.95 or newer                                                                  |
+| web2apk CLI   | `npm i -g @mainamiru/web2apk-cli` (Node.js >= 18.17)                           |
 | Android build | JDK 17, Android SDK (`ANDROID_HOME`), Gradle wrapper (ships with each project) |
 
 The **Check Environment** command tells you exactly what is missing.
@@ -36,25 +36,25 @@ The **Check Environment** command tells you exactly what is missing.
 
 ## Commands
 
-| Command | Action |
-| --- | --- |
-| `Web2APK: Create Project` | `web2apk create <name>` in the terminal |
-| `Web2APK: Validate Project` | `web2apk validate --json` |
-| `Web2APK: Build APK/AAB` | `web2apk build --debug\|--release\|--aab --json` |
-| `Web2APK: Clean Build` | `web2apk clean` in the terminal |
-| `Web2APK: Check Environment (Doctor)` | `web2apk doctor --json` |
-| `Web2APK: Open web2apk.config.json` | Opens the project config |
-| `Web2APK: Install / Update CLI` | `npm i -g @mainamiru/web2apk-cli` |
-| `Web2APK: Show Output` | Shows the Web2APK output channel |
+| Command                               | Action                                           |
+| ------------------------------------- | ------------------------------------------------ |
+| `Web2APK: Create Project`             | `web2apk create <name>` in the terminal          |
+| `Web2APK: Validate Project`           | `web2apk validate --json`                        |
+| `Web2APK: Build APK/AAB`              | `web2apk build --debug\|--release\|--aab --json` |
+| `Web2APK: Clean Build`                | `web2apk clean` in the terminal                  |
+| `Web2APK: Check Environment (Doctor)` | `web2apk doctor --json`                          |
+| `Web2APK: Open web2apk.config.json`   | Opens the project config                         |
+| `Web2APK: Install / Update CLI`       | `npm i -g @mainamiru/web2apk-cli`                |
+| `Web2APK: Show Output`                | Shows the Web2APK output channel                 |
 
 ## Settings
 
-| Setting | Default | Description |
-| --- | --- | --- |
-| `web2apk.cliPath` | `web2apk` | Command used to run the CLI (set an absolute path for a non-global install) |
-| `web2apk.defaultBuildTarget` | `debug` | Target pre-selected in the build picker |
-| `web2apk.notifyOnSuccess` | `true` | Notification when a build succeeds |
-| `web2apk.autoDetect` | `true` | Watch the workspace for `web2apk.config.json` files |
+| Setting                      | Default   | Description                                                                 |
+| ---------------------------- | --------- | --------------------------------------------------------------------------- |
+| `web2apk.cliPath`            | `web2apk` | Command used to run the CLI (set an absolute path for a non-global install) |
+| `web2apk.defaultBuildTarget` | `debug`   | Target pre-selected in the build picker                                     |
+| `web2apk.notifyOnSuccess`    | `true`    | Notification when a build succeeds                                          |
+| `web2apk.autoDetect`         | `true`    | Watch the workspace for `web2apk.config.json` files                         |
 
 ## Development
 

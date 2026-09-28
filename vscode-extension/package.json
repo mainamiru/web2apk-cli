@@ -6,6 +6,11 @@
   "publisher": "mainamiru",
   "license": "MIT",
   "icon": "assets/icon-128.png",
+  "author": {
+    "name": "LUCKY BABU",
+    "email": "dev.luckybabu@gmail.com",
+    "url": "https://mainamiru.online"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/mainamiru/web2apk-cli.git",

@@ -47,8 +47,7 @@ export class IconGenerator {
     try {
       // sharp is CJS: Node exposes module.exports as `default` for ESM importers
       const mod = (await import("sharp")) as unknown as { default?: unknown };
-      const resolved =
-        typeof mod.default === "function" ? mod.default : mod;
+      const resolved = typeof mod.default === "function" ? mod.default : mod;
       return resolved as unknown as Sharp;
     } catch {
       throw new Error(

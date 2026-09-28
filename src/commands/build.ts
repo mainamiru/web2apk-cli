@@ -51,7 +51,12 @@ function resolveTarget(
   return "debug";
 }
 
-function failBuild(json: boolean, projectName: string | undefined, msg: string, extra?: Record<string, unknown>): never {
+function failBuild(
+  json: boolean,
+  projectName: string | undefined,
+  msg: string,
+  extra?: Record<string, unknown>,
+): never {
   if (json) {
     console.log(
       JSON.stringify({
@@ -64,7 +69,8 @@ function failBuild(json: boolean, projectName: string | undefined, msg: string, 
     process.exit(1);
   }
   console.log(chalk.red(`\n✗ ${msg.split("\n")[0]}\n`));
-  if (msg.includes("\n")) console.log(chalk.gray(msg.split("\n").slice(1).join("\n")));
+  if (msg.includes("\n"))
+    console.log(chalk.gray(msg.split("\n").slice(1).join("\n")));
   process.exit(1);
 }
 
@@ -119,10 +125,15 @@ export async function buildCommand(
     );
 
   // 3. Inject web2apk.config.json into the Android project, then build
-  const injecting = json ? null : ora("Injecting web2apk.config.json...").start();
+  const injecting = json
+    ? null
+    : ora("Injecting web2apk.config.json...").start();
   let injectWarnings: string[] = [];
   try {
-    ({ warnings: injectWarnings } = await AndroidConfigurator.apply(config, key));
+    ({ warnings: injectWarnings } = await AndroidConfigurator.apply(
+      config,
+      key,
+    ));
     injecting?.succeed("Configuration injected");
   } catch (e) {
     injecting?.fail("Configuration injection failed");

@@ -57,9 +57,7 @@ export function runInTerminal(options: TerminalOptions): void {
  * return the machine-readable payload printed with `--json`.
  */
 export function runJson(options: RunJsonOptions): Promise<RunResult> {
-  const line = [options.command, ...options.args]
-    .map(quoteForShell)
-    .join(" ");
+  const line = [options.command, ...options.args].map(quoteForShell).join(" ");
   options.output.appendLine(`\n> ${line}`);
   options.output.appendLine(`  cwd: ${options.cwd}`);
 
@@ -139,7 +137,8 @@ export function runJson(options: RunJsonOptions): Promise<RunResult> {
       const payload = parseCliJson(buffer);
       if (timedOut) options.output.appendLine("\n[timed out]");
       else if (cancelled) options.output.appendLine("\n[cancelled]");
-      else if (code !== 0) options.output.appendLine(`\n[exit code ${code ?? "?"}]`);
+      else if (code !== 0)
+        options.output.appendLine(`\n[exit code ${code ?? "?"}]`);
       resolve({ code, output: buffer, payload, cancelled, timedOut });
     });
   });

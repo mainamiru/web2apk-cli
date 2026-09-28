@@ -10,7 +10,7 @@ const options = {
   format: "cjs",
   platform: "node",
   target: "node20",
-  minify: production,
+  minify: false,
   sourcemap: !production,
   sourcesContent: false,
   outfile: "dist/extension.js",
@@ -26,7 +26,9 @@ async function main() {
   }
   const result = await esbuild.build(options);
   if (result.errors.length) process.exit(1);
-  console.log(`[esbuild] built dist/extension.js${production ? " (production)" : ""}`);
+  console.log(
+    `[esbuild] built dist/extension.js${production ? " (production)" : ""}`,
+  );
 }
 
 main().catch((err) => {

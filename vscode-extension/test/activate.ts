@@ -10,7 +10,9 @@ interface Stub {
   __output: { text: string; clear(): void };
   __executed: { id: string; args: unknown[] }[];
   __openedDocs: string[];
-  __setFindFiles(uris: { fsPath: string; path: string; scheme: string }[]): void;
+  __setFindFiles(
+    uris: { fsPath: string; path: string; scheme: string }[],
+  ): void;
   __findFiles: { fsPath: string; path: string; scheme: string }[];
 }
 
@@ -28,7 +30,9 @@ const REQUIRED_COMMANDS = [
 
 let failures = 0;
 function check(name: string, ok: boolean, detail?: string): void {
-  console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? ` — ${detail}` : ""}`);
+  console.log(
+    `${ok ? "PASS" : "FAIL"}  ${name}${detail ? ` — ${detail}` : ""}`,
+  );
   if (!ok) failures += 1;
 }
 
@@ -42,10 +46,15 @@ async function main(): Promise<void> {
   const stub = vscode as unknown as Stub;
   const configPath = path.join(projectDir, "web2apk.config.json");
   stub.__setFindFiles([
-    { fsPath: configPath, path: configPath.replace(/\\/g, "/"), scheme: "file" },
+    {
+      fsPath: configPath,
+      path: configPath.replace(/\\/g, "/"),
+      scheme: "file",
+    },
   ]);
-  (vscode.workspace as unknown as { workspaceFolders: unknown[] }).workspaceFolders =
-    [{ uri: { fsPath: projectDir, path: projectDir } }];
+  (
+    vscode.workspace as unknown as { workspaceFolders: unknown[] }
+  ).workspaceFolders = [{ uri: { fsPath: projectDir, path: projectDir } }];
 
   const context = {
     subscriptions: [] as { dispose(): void }[],
@@ -143,8 +152,7 @@ async function main(): Promise<void> {
     `${stub.__output.text.length} chars`,
   );
   const success = buildMessages.find(
-    (message) =>
-      message.type === "info" && message.text.includes("APK built"),
+    (message) => message.type === "info" && message.text.includes("APK built"),
   );
   check(
     "build reports the artifact and its size",
@@ -189,13 +197,12 @@ async function main(): Promise<void> {
   );
 
   await stub.__commands["web2apk.showOutput"]();
-  check(
-    "showOutput does not throw",
-    true,
-  );
+  check("showOutput does not throw", true);
 
   console.log(
-    failures === 0 ? "\nALL ACTIVATION TESTS PASSED" : `\n${failures} TEST(S) FAILED`,
+    failures === 0
+      ? "\nALL ACTIVATION TESTS PASSED"
+      : `\n${failures} TEST(S) FAILED`,
   );
   process.exit(failures === 0 ? 0 : 1);
 }

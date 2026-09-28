@@ -132,7 +132,7 @@ export async function doctorCommand(opts?: { json?: boolean }): Promise<void> {
       `${c.ok ? chalk.green("✓") : chalk.red("✗")} ${c.ok ? c.label : `${c.label}${c.detail ? chalk.gray(` — ${c.detail}`) : ""}`}`,
     );
   }
-  
+
   if (!allOk) {
     console.log(
       chalk.yellow(
@@ -143,23 +143,32 @@ export async function doctorCommand(opts?: { json?: boolean }): Promise<void> {
     // Offer to auto-install missing components
     if (process.stdin.isTTY) {
       const missingComponents: string[] = [];
-      
+
       // Check for missing Java
-      const javaCheck = checks.find(c => c.label.includes("Java"));
+      const javaCheck = checks.find((c) => c.label.includes("Java"));
       if (javaCheck && !javaCheck.ok) {
         missingComponents.push("Java JDK");
       }
-      
+
       // Check for missing Android SDK (by checking if ANDROID_HOME is set)
-      const androidHomeCheck = checks.find(c => c.label.includes("ANDROID_HOME"));
+      const androidHomeCheck = checks.find((c) =>
+        c.label.includes("ANDROID_HOME"),
+      );
       if (androidHomeCheck && !androidHomeCheck.ok) {
         missingComponents.push("Android Studio/SDK");
       }
-      
+
       // Check for missing SDK platforms or build tools
-      const platformCheck = checks.find(c => c.label.includes("Android SDK Platform"));
-      const buildToolsCheck = checks.find(c => c.label.includes("Android Build Tools"));
-      if ((platformCheck && !platformCheck.ok) || (buildToolsCheck && !buildToolsCheck.ok)) {
+      const platformCheck = checks.find((c) =>
+        c.label.includes("Android SDK Platform"),
+      );
+      const buildToolsCheck = checks.find((c) =>
+        c.label.includes("Android Build Tools"),
+      );
+      if (
+        (platformCheck && !platformCheck.ok) ||
+        (buildToolsCheck && !buildToolsCheck.ok)
+      ) {
         if (!missingComponents.includes("Android SDK Components")) {
           missingComponents.push("Android SDK Components");
         }

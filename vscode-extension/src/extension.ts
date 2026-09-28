@@ -1,11 +1,24 @@
 import * as path from "node:path";
 import * as vscode from "vscode";
-import { CLI_PACKAGE, MIN_CLI_VERSION, errText, firstLine, formatBytes, isValidProjectName } from "./util";
+import {
+  CLI_PACKAGE,
+  MIN_CLI_VERSION,
+  errText,
+  firstLine,
+  formatBytes,
+  isValidProjectName,
+} from "./util";
 import { compareVersions, invalidateCli, probeCli } from "./cli";
 import { ProjectStore } from "./projects";
 import { runInTerminal, runJson, type RunResult } from "./runner";
 import { StatusProvider } from "./statusBar";
-import type { BuildPayload, BuildTarget, CliInfo, DoctorPayload, ValidatePayload } from "./types";
+import type {
+  BuildPayload,
+  BuildTarget,
+  CliInfo,
+  DoctorPayload,
+  ValidatePayload,
+} from "./types";
 
 interface StatusAction extends vscode.QuickPickItem {
   command: string;
@@ -128,9 +141,7 @@ export function activate(context: vscode.ExtensionContext): void {
   ): void {
     for (const check of checks) {
       const suffix =
-        check.ok || !check.detail
-          ? ""
-          : ` — ${firstLine(check.detail)}`;
+        check.ok || !check.detail ? "" : ` — ${firstLine(check.detail)}`;
       output.appendLine(`${check.ok ? "✓" : "✗"} ${check.label}${suffix}`);
     }
   }
@@ -326,7 +337,11 @@ export function activate(context: vscode.ExtensionContext): void {
       if (notifyOnSuccess()) {
         const summary = `${kind} built${size ? ` (${size})` : ""}${took}: ${path.basename(artifact)}`;
         void vscode.window
-          .showInformationMessage(`Web2APK: ${summary}`, "Reveal", "Show Output")
+          .showInformationMessage(
+            `Web2APK: ${summary}`,
+            "Reveal",
+            "Show Output",
+          )
           .then((choice) => {
             if (choice === "Reveal") {
               void vscode.commands.executeCommand(
@@ -344,7 +359,9 @@ export function activate(context: vscode.ExtensionContext): void {
     endBusy("error", "Web2APK: build failed");
     reportFailure(
       "build failed",
-      payload?.error ? firstLine(payload.error) : `exit code ${result.code ?? "?"}`,
+      payload?.error
+        ? firstLine(payload.error)
+        : `exit code ${result.code ?? "?"}`,
     );
   }
 
@@ -396,7 +413,10 @@ export function activate(context: vscode.ExtensionContext): void {
           });
       } else {
         endBusy("error", "Web2APK: environment check failed");
-        reportFailure("environment check failed", `exit code ${result.code ?? "?"}`);
+        reportFailure(
+          "environment check failed",
+          `exit code ${result.code ?? "?"}`,
+        );
       }
     } catch (error) {
       endBusy("error", "Web2APK: environment check failed");
@@ -406,11 +426,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
   async function openConfigCommand(resource?: vscode.Uri): Promise<void> {
     const active = vscode.window.activeTextEditor?.document.uri;
-    if (
-      !resource &&
-      active &&
-      active.path.endsWith("/web2apk.config.json")
-    ) {
+    if (!resource && active && active.path.endsWith("/web2apk.config.json")) {
       void vscode.window.showTextDocument(active, { preview: false });
       return;
     }
@@ -505,8 +521,9 @@ export function activate(context: vscode.ExtensionContext): void {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("web2apk.create", () => createCommand()),
-    vscode.commands.registerCommand("web2apk.validate", (resource?: vscode.Uri) =>
-      validateCommand(resource),
+    vscode.commands.registerCommand(
+      "web2apk.validate",
+      (resource?: vscode.Uri) => validateCommand(resource),
     ),
     vscode.commands.registerCommand("web2apk.build", (resource?: vscode.Uri) =>
       buildCommand(resource),
@@ -515,8 +532,9 @@ export function activate(context: vscode.ExtensionContext): void {
       cleanCommand(resource),
     ),
     vscode.commands.registerCommand("web2apk.doctor", () => doctorCommand()),
-    vscode.commands.registerCommand("web2apk.openConfig", (resource?: vscode.Uri) =>
-      openConfigCommand(resource),
+    vscode.commands.registerCommand(
+      "web2apk.openConfig",
+      (resource?: vscode.Uri) => openConfigCommand(resource),
     ),
     vscode.commands.registerCommand("web2apk.installCli", () =>
       installCliCommand(),

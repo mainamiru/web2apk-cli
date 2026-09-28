@@ -21,7 +21,12 @@ export function formatBytes(bytes: number): string {
 }
 
 export function firstLine(text: string): string {
-  return text.split(/\r?\n/).find((line) => line.trim().length > 0)?.trim() ?? "";
+  return (
+    text
+      .split(/\r?\n/)
+      .find((line) => line.trim().length > 0)
+      ?.trim() ?? ""
+  );
 }
 
 export function errText(err: unknown): string {

@@ -33,10 +33,7 @@ export interface ErrorPayload {
 }
 
 export type CliPayload =
-  | ValidatePayload
-  | DoctorPayload
-  | BuildPayload
-  | ErrorPayload;
+  ValidatePayload | DoctorPayload | BuildPayload | ErrorPayload;
 
 export type BuildTarget = "debug" | "release" | "aab";
 

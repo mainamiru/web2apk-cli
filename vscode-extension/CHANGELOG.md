@@ -10,12 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.0] - 2026-09-28
 
 ### Notes
+
 - Version bump only: no functional changes.
 - Investigated the `DEP0169` (`url.parse()`) warning printed by `code --install-extension`. The stack points at VS Code's own `vs/code/node/cliProcessMain.js` (gallery metadata query), not at this extension — the extension bundle and every runtime dependency were scanned and contain no `url.parse()` call.
 
 ## [1.0.1] - 2026-09-28
 
 ### Added
+
 - Initial release: create, validate, build, clean, doctor and config commands
 - Status bar with project, CLI version and a command menu
 - Cancellable build progress with artifact reveal on success

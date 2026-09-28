@@ -75,7 +75,11 @@ export async function configCommand(
 
     if (json) {
       console.log(
-        JSON.stringify({ success: true, project: label, path: file, config }, null, 2),
+        JSON.stringify(
+          { success: true, project: label, path: file, config },
+          null,
+          2,
+        ),
       );
       return;
     }
@@ -106,7 +110,7 @@ export async function configCommand(
 
   if (opts.name !== undefined) {
     const v = opts.name.trim();
-    if (!v) fail("App name cannot be empty.", "Example: --name \"Hello World\"");
+    if (!v) fail("App name cannot be empty.", 'Example: --name "Hello World"');
     next.app.name = v;
   }
   if (opts.package !== undefined) {

@@ -57,16 +57,20 @@ program
 
 program
   .command("validate [project-name]")
-  .description("Validate a generated project (defaults to the current directory)")
+  .description(
+    "Validate a generated project (defaults to the current directory)",
+  )
   .option("--json", "Machine-readable output")
-  .action(async (projectName: string | undefined, options: { json?: boolean }) => {
-    try {
-      const ok = await validateCommand(projectName, options);
-      if (!ok) process.exit(1);
-    } catch (err) {
-      handleError(err, false);
-    }
-  });
+  .action(
+    async (projectName: string | undefined, options: { json?: boolean }) => {
+      try {
+        const ok = await validateCommand(projectName, options);
+        if (!ok) process.exit(1);
+      } catch (err) {
+        handleError(err, false);
+      }
+    },
+  );
 
 program
   .command("build [project-name]")
@@ -78,17 +82,24 @@ program
   .option("--aab", "Build Release AAB (bundleRelease)")
   .option("--json", "Machine-readable output")
   .option("--verbose", "Show full error stack traces")
-  .action(async (projectName: string | undefined, options: Record<string, unknown>) => {
-    try {
-      await buildCommand(projectName, options as never);
-    } catch (err) {
-      handleError(err, Boolean(options.verbose));
-    }
-  });
+  .action(
+    async (
+      projectName: string | undefined,
+      options: Record<string, unknown>,
+    ) => {
+      try {
+        await buildCommand(projectName, options as never);
+      } catch (err) {
+        handleError(err, Boolean(options.verbose));
+      }
+    },
+  );
 
 program
   .command("clean [project-name]")
-  .description("Run Gradle clean inside the generated project (defaults to the current directory)")
+  .description(
+    "Run Gradle clean inside the generated project (defaults to the current directory)",
+  )
   .action(async (projectName: string | undefined) => {
     try {
       await cleanCommand(projectName);
@@ -99,7 +110,9 @@ program
 
 program
   .command("config [project-name]")
-  .description("Read or update web2apk.config.json (defaults to the current directory)")
+  .description(
+    "Read or update web2apk.config.json (defaults to the current directory)",
+  )
   .option("--name <name>", "App display name")
   .option(
     "--package <package>",
@@ -122,13 +135,18 @@ program
     "App icon source (PNG, JPG, WEBP or SVG) — generates all launcher densities",
   )
   .option("--json", "Machine-readable output")
-  .action(async (projectName: string | undefined, options: Record<string, unknown>) => {
-    try {
-      await configCommand(projectName, options as never);
-    } catch (err) {
-      handleError(err, false);
-    }
-  });
+  .action(
+    async (
+      projectName: string | undefined,
+      options: Record<string, unknown>,
+    ) => {
+      try {
+        await configCommand(projectName, options as never);
+      } catch (err) {
+        handleError(err, false);
+      }
+    },
+  );
 
 program
   .command("doctor")
@@ -144,7 +162,9 @@ program
 
 program
   .command("install")
-  .description("Install missing SDK dependencies (Java, Android Studio, Android SDK)")
+  .description(
+    "Install missing SDK dependencies (Java, Android Studio, Android SDK)",
+  )
   .option("--java", "Install Java JDK")
   .option("--android-studio", "Install Android Studio")
   .option("--android-sdk", "Install Android SDK components")
