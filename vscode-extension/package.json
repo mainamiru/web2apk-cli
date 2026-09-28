@@ -1,7 +1,7 @@
 {
   "name": "web2apk",
   "displayName": "Web2APK",
-  "description": "Create, configure, validate and build Android APK/AAB from web projects with the web2apk CLI.",
+  "description": "Create, configure, validate and build APK/AAB from web projects with the web2apk CLI.",
   "version": "1.2.0",
   "publisher": "mainamiru",
   "license": "MIT",

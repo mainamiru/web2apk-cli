@@ -8,6 +8,11 @@ tests/**
 *.ts
 tsconfig.json
 tsconfig.*.json
+**/*.map
+esbuild.js
+package-lock.json
+*.vsix
+.gitignore
 .env
 .env.*
 *.log
