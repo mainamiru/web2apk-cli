@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-28
+
+### Added
+- VS Code extension in `vscode-extension/` (create, validate, build, clean, doctor, open config, status bar and explorer actions, schema validation for `web2apk.config.json`), published as `mainamiru.web2apk`
+- `web2apk --cli-version` now reports the real package version instead of a hardcoded `1.0.0`
+
+### Changed
+- Documentation: VS Code extension section in `README.md` and extension publishing guide in `PUBLISHING.md`
+
 ## [1.0.1] - 2026-09-28
 
 ### Added
@@ -14,8 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Icons are regenerated from `app.icon` on every `build` and config injection
 - `validate` now checks that launcher icons and the configured icon source are present
 - `config` command to read or update `web2apk.config.json` (`web2apk config --name "Hello World"`), saving the file and injecting it into the Android project immediately
-- VS Code extension in `vscode-extension/` (create, validate, build, clean, doctor, open config, status bar and explorer actions, schema validation for `web2apk.config.json`)
-- `web2apk --cli-version` now reports the real package version instead of a hardcoded string
 - Automatic SDK installation functionality for Java JDK, Android Studio, and Android SDK components
 - Interactive install command with component selection
 - Enhanced doctor command with auto-install prompts
@@ -44,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - High-density icon processing
 - WebView configuration options
 
-[Unreleased]: https://github.com/mainamiru/web2apk-cli/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/mainamiru/web2apk-cli/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/mainamiru/web2apk-cli/releases/tag/v1.2.0
 [1.0.1]: https://github.com/mainamiru/web2apk-cli/releases/tag/v1.0.1
 [1.0.0]: https://github.com/mainamiru/web2apk-cli/releases/tag/v1.0.0
