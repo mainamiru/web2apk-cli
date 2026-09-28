@@ -138,3 +138,45 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
+## Publishing the VS Code Extension
+
+The VS Code extension lives in [`vscode-extension/`](vscode-extension/) and is published to the Visual Studio Marketplace under the publisher id `mainamiru` (must match `publisher` in `vscode-extension/package.json`).
+
+### One-time setup
+
+1. Create the publisher at https://marketplace.visualstudio.com/manage (Publishers -> Create publisher) with the id `mainamiru`.
+2. Create a **Personal Access Token** (PAT) at https://dev.azure.com:
+   - Organization: `All accessible organizations`
+   - Expiration: as long as allowed (Azure DevOps retires global PATs on Dec 1, 2026)
+   - Custom published scope: **Marketplace** -> **Manage**
+3. Log in once: `cd vscode-extension && npx vsce login mainamiru` (the token is stored in `~/.vsce`).
+
+### Publishing process
+
+```bash
+cd vscode-extension
+npm install
+npm run package              # type-check + production bundle (runs automatically on publish)
+npm run vsce:package         # -> web2apk-<version>.vsix
+npm run vsce:publish         # publishes to the Marketplace
+```
+
+Or publish the `.vsix` by hand: https://marketplace.visualstudio.com/manage → *...* → *Upload Extension*.
+
+### Checklist
+
+- [ ] `vscode-extension/package.json` version matches the release you are shipping
+- [ ] `vscode-extension/CHANGELOG.md` updated
+- [ ] `npm run check-types` passes
+- [ ] `npm run test:bundle` then run both suites against a real project (see `vscode-extension/README.md`)
+- [ ] `web2apk-<version>.vsix` installs cleanly: `code --install-extension web2apk-<version>.vsix`
+- [ ] `schema/web2apk-config.schema.json` still mirrors `src/schemas/web2apk-config.ts`
+
+### CI publishing
+
+After the Azure DevOps global PAT retirement (Dec 1, 2026) prefer Azure CLI authentication instead of a PAT:
+
+```bash
+az login
+npx vsce publish --azure-credential
+```

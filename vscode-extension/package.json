@@ -1,0 +1,181 @@
+{
+  "name": "web2apk",
+  "displayName": "Web2APK",
+  "description": "Create, configure, validate and build Android APK/AAB from web projects with the web2apk CLI.",
+  "version": "1.0.1",
+  "publisher": "mainamiru",
+  "license": "MIT",
+  "icon": "assets/icon-128.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mainamiru/web2apk-cli.git",
+    "directory": "vscode-extension"
+  },
+  "homepage": "https://github.com/mainamiru/web2apk-cli#readme",
+  "bugs": {
+    "url": "https://github.com/mainamiru/web2apk-cli/issues"
+  },
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "android",
+    "apk",
+    "aab",
+    "webview",
+    "pwa",
+    "gradle",
+    "mobile",
+    "web2apk"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "workspaceContains:**/web2apk.config.json"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "web2apk.create",
+        "title": "Create Project",
+        "category": "Web2APK",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "web2apk.validate",
+        "title": "Validate Project",
+        "category": "Web2APK",
+        "icon": "$(checklist)"
+      },
+      {
+        "command": "web2apk.build",
+        "title": "Build APK/AAB",
+        "category": "Web2APK",
+        "icon": "$(package)"
+      },
+      {
+        "command": "web2apk.clean",
+        "title": "Clean Build",
+        "category": "Web2APK",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "web2apk.doctor",
+        "title": "Check Environment (Doctor)",
+        "category": "Web2APK",
+        "icon": "$(heart)"
+      },
+      {
+        "command": "web2apk.openConfig",
+        "title": "Open web2apk.config.json",
+        "category": "Web2APK",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "web2apk.installCli",
+        "title": "Install / Update CLI",
+        "category": "Web2APK",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "web2apk.showOutput",
+        "title": "Show Output",
+        "category": "Web2APK",
+        "icon": "$(output)"
+      },
+      {
+        "command": "web2apk.statusMenu",
+        "title": "Web2APK Menu",
+        "category": "Web2APK",
+        "icon": "$(menu)"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "web2apk.statusMenu",
+          "when": "false"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "web2apk.build",
+          "group": "web2apk@1",
+          "when": "web2apk.hasProject"
+        },
+        {
+          "command": "web2apk.validate",
+          "group": "web2apk@2",
+          "when": "web2apk.hasProject"
+        },
+        {
+          "command": "web2apk.openConfig",
+          "group": "web2apk@3",
+          "when": "web2apk.hasProject"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Web2APK",
+      "properties": {
+        "web2apk.cliPath": {
+          "type": "string",
+          "default": "web2apk",
+          "scope": "machine",
+          "markdownDescription": "Command used to run the [web2apk CLI](https://www.npmjs.com/package/@mainamiru/web2apk-cli). Keep `web2apk` for a global install (`npm i -g @mainamiru/web2apk-cli`), or set an absolute path to the binary."
+        },
+        "web2apk.defaultBuildTarget": {
+          "type": "string",
+          "enum": [
+            "debug",
+            "release",
+            "aab"
+          ],
+          "enumDescriptions": [
+            "Debug APK (assembleDebug)",
+            "Release APK (assembleRelease)",
+            "Release AAB (bundleRelease)"
+          ],
+          "default": "debug",
+          "description": "Pre-selected target in the build picker."
+        },
+        "web2apk.notifyOnSuccess": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a notification when a build succeeds."
+        },
+        "web2apk.autoDetect": {
+          "type": "boolean",
+          "default": true,
+          "description": "Watch the workspace for web2apk.config.json files and keep the status bar up to date."
+        }
+      }
+    },
+    "jsonValidation": [
+      {
+        "fileMatch": "**/web2apk.config.json",
+        "url": "./schema/web2apk-config.schema.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "package": "npm run check-types && node esbuild.js --production",
+    "compile": "npm run check-types && node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "check-types": "tsc --noEmit",
+    "test:bundle": "node test/bundle.js",
+    "vsce:package": "vsce package",
+    "vsce:publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "@types/vscode": "1.95.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.0"
+  }
+}

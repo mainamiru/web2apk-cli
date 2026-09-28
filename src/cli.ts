@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { createRequire } from "node:module";
 import { Command } from "commander";
 import chalk from "chalk";
 import { createCommand } from "./commands/create.js";
@@ -10,12 +11,15 @@ import { doctorCommand } from "./commands/doctor.js";
 import { installCommand } from "./commands/install.js";
 import { printBanner } from "./ui/banner.js";
 
+const require_ = createRequire(import.meta.url);
+const pkg = require_("../package.json") as { version: string };
+
 const program = new Command();
 
 program
   .name("web2apk")
   .description("Build Android apps from web")
-  .version("1.0.0", "-V, --cli-version", "Output the CLI version number");
+  .version(pkg.version, "-V, --cli-version", "Output the CLI version number");
 
 program
   .command("create <project-name>")

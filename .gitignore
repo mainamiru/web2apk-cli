@@ -5,6 +5,7 @@ node_modules
 out
 dist
 *.tgz
+*.vsix
 
 # generated Android projects (created by `web2apk create`)
 projects/

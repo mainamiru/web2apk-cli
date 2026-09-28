@@ -1,0 +1,154 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/mainamiru/web2apk-cli/main/vscode-extension/schema/web2apk-config.schema.json",
+  "title": "web2apk.config.json",
+  "description": "Configuration for a web2apk Android project. Mirrors the zod schema in src/schemas/web2apk-config.ts.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project", "app", "content"],
+  "properties": {
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-_]*$",
+          "description": "Folder name of the generated project (letters, numbers, \"-\" and \"_\")."
+        }
+      }
+    },
+    "app": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "packageName", "versionName", "versionCode"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Display name shown under the launcher icon."
+        },
+        "packageName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z][a-zA-Z0-9_]*){2,}$",
+          "description": "Android application ID, at least 3 dot-separated segments without Java keywords (e.g. com.company.myapp)."
+        },
+        "versionName": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(-[\\w.]+)?(\\+[\\w.]+)?$",
+          "description": "User-facing version, semver like 1.0.0."
+        },
+        "versionCode": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2100000000,
+          "description": "Internal version code used by Google Play. Increment for every release."
+        },
+        "icon": {
+          "type": "string",
+          "maxLength": 512,
+          "description": "Project-relative launcher icon source (e.g. assets/icon.png). PNG, JPG, WEBP or SVG. Empty string uses the template icon."
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["url", "asset", "html"],
+          "description": "What the WebView loads: a remote url, bundled assets, or inline html."
+        },
+        "url": {
+          "type": "string",
+          "default": "",
+          "description": "Remote origin loaded when type is \"url\" (http:// or https://)."
+        },
+        "assetPath": {
+          "type": "string",
+          "default": "www/index.html",
+          "description": "Path inside the bundled assets when type is \"asset\"."
+        },
+        "rawHtml": {
+          "type": "string",
+          "default": "",
+          "description": "Inline HTML document when type is \"html\"."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "url" } } },
+          "then": {
+            "required": ["url"],
+            "properties": {
+              "url": {
+                "type": "string",
+                "pattern": "^https?://",
+                "description": "Must start with http:// or https://."
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "asset" } } },
+          "then": {
+            "required": ["assetPath"],
+            "properties": { "assetPath": { "minLength": 1 } }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "html" } } },
+          "then": {
+            "required": ["rawHtml"],
+            "properties": { "rawHtml": { "minLength": 1 } }
+          }
+        }
+      ]
+    },
+    "webview": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowedHosts": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "default": [],
+          "description": "Hosts the WebView may navigate to (empty allows the configured origin only)."
+        },
+        "userAgentSuffix": {
+          "type": "string",
+          "maxLength": 200,
+          "default": "",
+          "description": "Appended to the WebView user agent."
+        },
+        "javascript": { "type": "boolean", "default": true },
+        "domStorage": { "type": "boolean", "default": true },
+        "database": { "type": "boolean", "default": true },
+        "builtInZoom": { "type": "boolean", "default": true },
+        "displayZoomControls": { "type": "boolean", "default": false },
+        "pullToRefresh": { "type": "boolean", "default": true },
+        "topProgressBar": { "type": "boolean", "default": true },
+        "centerLoader": { "type": "boolean", "default": false },
+        "fileUpload": { "type": "boolean", "default": true },
+        "downloads": { "type": "boolean", "default": true },
+        "geolocation": { "type": "boolean", "default": false },
+        "cameraMicrophone": { "type": "boolean", "default": false },
+        "notifications": { "type": "boolean", "default": false },
+        "backNavigation": { "type": "boolean", "default": true },
+        "confirmExit": { "type": "boolean", "default": true },
+        "mixedContent": { "type": "boolean", "default": false },
+        "clearCacheOnExit": { "type": "boolean", "default": false },
+        "multipleWindows": { "type": "boolean", "default": true },
+        "autoRetryNetworkRecovery": { "type": "boolean", "default": true }
+      }
+    }
+  }
+}

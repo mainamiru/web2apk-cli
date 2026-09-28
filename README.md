@@ -91,6 +91,18 @@ npm link
 web2apk --help
 ```
 
+### VS Code Extension
+
+A companion extension lives in [`vscode-extension/`](vscode-extension/). It wraps every CLI command — create, validate, build, clean, doctor, open config — behind the command palette, a status bar menu and the explorer context menu, and validates `web2apk.config.json` with a schema.
+
+```bash
+cd vscode-extension
+npm install
+npm run compile
+```
+
+Press `F5` from the `vscode-extension` folder to debug it in an Extension Development Host, or install a packaged build with `code --install-extension web2apk-<version>.vsix`. Publishing steps are documented in [PUBLISHING.md](PUBLISHING.md#publishing-the-vs-code-extension).
+
 ---
 
 ## 💻 Commands & Examples
